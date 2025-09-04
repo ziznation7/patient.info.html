@@ -2,103 +2,109 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Emergency Info - Zayyad Ibrahim Zarma </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Emergency Data</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
-      color: #333;
-      display: flex;
-      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f7f9fc;
+      margin: 0;
       padding: 20px;
+      color: #333;
     }
-    .card {
-      max-width: 600px;
-      width: 100%;
+    .container {
+      max-width: 650px;
+      margin: auto;
       background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
       padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .header {
+    h2 {
       text-align: center;
-      border-bottom: 2px solid #eee;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-    }
-    .header img {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      border: 3px solid #b22222;
+      color: #0050b3;
       margin-bottom: 10px;
     }
-    .header h2 {
-      margin: 5px 0;
-      color: #b22222;
+    .subtitle {
+      text-align: center;
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 20px;
     }
-    .section {
+    .photo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .photo img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid #0050b3;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #0050b3;
+      margin: 20px 0 10px;
+      border-bottom: 2px solid #0050b3;
+      padding-bottom: 5px;
+    }
+    .info {
       margin-bottom: 15px;
     }
-    .section h3 {
-      font-size: 16px;
-      margin-bottom: 8px;
-      color: #444;
-      border-left: 4px solid #b22222;
-      padding-left: 8px;
+    .info strong {
+      color: #0050b3;
     }
-    .info p {
-      margin: 6px 0;
+    #qrcode {
+      text-align: center;
+      margin-top: 25px;
     }
-    .emergency {
-      background: #fff4f4;
-      border: 1px solid #ffcccc;
-      padding: 12px;
-      border-radius: 8px;
-      color: #b22222;
-      font-weight: bold;
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <!-- Header with photo -->
-    <div class="header">
-      <img src="jane.jpg" alt="Patient Photo">
+  <div class="container">
+    <h2>Zayyad Ibrahim Zarma</h2>
+    <div class="subtitle">Male, 34 years</div>
 
-      <h2>Zayyad Ibrahim Zarma/h2>
-      <p>Male, 34 years</p>
+    <div class="photo">
+      <img src="patient.jpg" alt="Patient Photo">
     </div>
 
-    <!-- Core Medical Info -->
-    <div class="section">
-      <h3>Medical Details</h3>
-      <div class="info">
-        <p><strong>Blood Type:</strong> O+</p>
-        <p><strong>Genotype:</strong> AB</p>
-        <p><strong>Allergies:</strong> Penicillin,Dust,Honey</p>
-        <p><strong>Current Medications:</strong> Paracetamol 500mg, Loratidin 10mg, Vitamin C 1000UI bd</p>
-      </div>
-    </div>
+    <div class="section-title">Medical Details</div>
+    <div class="info"><strong>Blood Type:</strong> O+</div>
+    <div class="info"><strong>Genotype:</strong> AB</div>
+    <div class="info"><strong>Allergies:</strong> Penicillin, Dust, Honey</div>
+    <div class="info"><strong>Current Medications:</strong> Paracetamol 500mg, Loratidin 10mg, Vitamin C 1000UI bd</div>
 
-    <div class="section">
-      <h3>History</h3>
-      <div class="info">
-        <p><strong>Past Medical History:</strong> Hypertension,Asthma</p>
-        <p><strong>Past Surgical History:</strong> Appendectomy (2015)</p>
-        <p><strong>Family Illness History:</strong> Hypertension (Mother), Hypertension (Father)</p>
-        <p><strong>Immunization History:</strong> Fully immunized, COVID-19 (2 doses)</p>
-        <p><strong>Social History:</strong> Non-smoker, non Alcohol</p>
-      </div>
-    </div>
+    <div class="section-title">History</div>
+    <div class="info"><strong>Past Medical History:</strong> Hypertension, Asthma</div>
+    <div class="info"><strong>Past Surgical History:</strong> Appendectomy (2015)</div>
+    <div class="info"><strong>Family Illness History:</strong> Hypertension (Mother), Hypertension (Father)</div>
+    <div class="info"><strong>Immunization History:</strong> Fully immunized, COVID-19 (2 doses)</div>
+    <div class="info"><strong>Social History:</strong> Non-smoker, Non-alcohol</div>
 
-    <!-- Emergency Contact -->
-    <div class="section">
-      <h3>Emergency Contact</h3>
-      <div class="emergency">
-        Hauwa Zayyad (spouse) (+2348036559455)
-      </div>
-    </div>
+    <div class="section-title">Emergency Contact</div>
+    <div class="info"><strong>Hauwa Zayyad (spouse):</strong> +2348036559455</div>
+
+    <div id="qrcode"></div>
+
+    <div class="footer">⚕️ In case of emergency, scan this card</div>
   </div>
+
+  <script>
+    new QRCode(document.getElementById("qrcode"), {
+      text: "https://yourusername.github.io/patient-info/",
+      width: 150,
+      height: 150
+    });
+  </script>
 </body>
 </html>
