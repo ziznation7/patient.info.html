@@ -84,26 +84,32 @@
   </div>
 
   <script>
-    // Replace with your actual n8n Production Webhook URL
     const webhookUrl = "https://zenthuratech007.app.n8n.cloud/webhook-test/scan-alert";
 
     const patient = "Zayyad Ibrahim Zarma";
 
-    // Try to get the user’s current location
     navigator.geolocation.getCurrentPosition(
       function(pos) {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
+        const timestamp = new Date().toISOString();
 
-        // Send data to n8n webhook
-        fetch(`${webhookUrl}?patient=${encodeURIComponent(patient)}&lat=${lat}&lon=${lon}`)
-          .then(response => console.log("Location sent to server"))
-          .catch(err => console.error("Error sending location:", err));
+        // Send JSON instead of query strings
+        fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            patient: patient,
+            lat: lat,
+            lon: lon,
+            timestamp: timestamp
+          })
+        })
+        .then(response => console.log("✅ Sent to server"))
+        .catch(err => console.error("❌ Error:", err));
       },
       function(err) {
-        console.error("Could not get location:", err);
+        console.error("❌ Could not get location:", err);
       }
     );
-  </script>
-</body>
-</html>
+</script>
