@@ -84,7 +84,8 @@
   </div>
 
   <script>
-    const webhookUrl = "https://zenthuratech007.app.n8n.cloud/webhook-test/scan-alert";
+    // ✅ Use PRODUCTION webhook (not test)
+    const webhookUrl = "https://zenthuratech007.app.n8n.cloud/webhook/scan-alert";
 
     const patient = "Zayyad Ibrahim Zarma";
 
@@ -94,7 +95,6 @@
         const lon = pos.coords.longitude;
         const timestamp = new Date().toISOString();
 
-        // Send JSON instead of query strings
         fetch(webhookUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -112,4 +112,6 @@
         console.error("❌ Could not get location:", err);
       }
     );
-</script>
+  </script>
+</body>
+</html>
