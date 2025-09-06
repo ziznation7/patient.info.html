@@ -3,115 +3,573 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Patient Emergency Info</title>
+  <title>Patient Emergency Health Record</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    /* Global Styles */
+    :root {
+      --primary: #2c6e9b;
+      --primary-light: #e8f2f9;
+      --secondary: #4CAF50;
+      --danger: #e74c3c;
+      --warning: #f39c12;
+      --success: #27ae60;
+      --gray: #95a5a6;
+      --light: #ecf0f1;
+      --dark: #2c3e50;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background: #f8f9fa;
-      color: #333;
-    }
-    .card {
-      max-width: 500px;
-      margin: auto;
-      background: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+      background-color: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
     }
-    h1, h2 {
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: #fff;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, #1a4e75 100%);
+      color: white;
+      padding: 20px;
       text-align: center;
-      color: #007BFF;
+      position: relative;
     }
-    .photo {
+    
+    h1 {
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+    
+    .subtitle {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    
+    .emergency-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: var(--danger);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: bold;
       display: flex;
-      justify-content: center;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 0;
+    }
+    
+    .sidebar {
+      background-color: var(--primary-light);
+      padding: 25px 20px;
+      border-right: 1px solid #dbe9f3;
+    }
+    
+    .main-content {
+      padding: 25px;
+    }
+    
+    .profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+    
+    .profile-img-container {
+      position: relative;
       margin-bottom: 15px;
     }
-    .photo img {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
+    
+    .profile-img {
+      width: 130px;
+      height: 130px;
       border-radius: 50%;
-      border: 3px solid #007BFF;
+      object-fit: cover;
+      border: 4px solid white;
+      box-shadow: var(--box-shadow);
     }
-    .section {
-      margin-top: 15px;
+    
+    .change-photo-btn {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      background-color: var(--primary);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid white;
+      transition: all 0.2s;
     }
-    .section h3 {
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 5px;
-      margin-bottom: 10px;
-      color: #444;
+    
+    .change-photo-btn:hover {
+      background-color: #235a7c;
     }
-    .section p {
-      margin: 5px 0;
+    
+    .patient-info {
+      text-align: center;
+    }
+    
+    .patient-name {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 5px;
+    }
+    
+    .patient-details {
+      color: var(--gray);
+      margin-bottom: 15px;
+    }
+    
+    .info-card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: var(--box-shadow);
+    }
+    
+    .info-card h3 {
+      color: var(--primary);
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .info-item {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: flex-start;
+    }
+    
+    .info-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .info-label {
+      font-weight: 600;
+      min-width: 120px;
+      color: var(--dark);
+    }
+    
+    .info-value {
+      flex: 1;
+    }
+    
+    input[type="text"], select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 15px;
+      transition: border 0.3s;
+    }
+    
+    input[type="text"]:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(44, 110, 155, 0.2);
+    }
+    
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary);
+      margin: 25px 0 15px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: all 0.2s;
+      width: 100%;
+      margin-top: 10px;
+    }
+    
+    .btn:hover {
+      background-color: #235a7c;
+    }
+    
+    .btn-download {
+      background-color: var(--success);
+    }
+    
+    .btn-download:hover {
+      background-color: #219653;
+    }
+    
+    .timestamp {
+      text-align: center;
+      color: var(--gray);
+      font-size: 14px;
+      margin-top: 20px;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+    
+    .badge-allergy {
+      background-color: #ffe8e8;
+      color: #e74c3c;
+    }
+    
+    .badge-medication {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+    
+    .badge-history {
+      background-color: #e3f2fd;
+      color: #1565c0;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #dbe9f3;
+      }
+      
+      .emergency-badge {
+        position: static;
+        margin-top: 15px;
+        justify-content: center;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Patient Emergency Info</h1>
-    <div class="photo">
-      <img src="patient.jpg" alt="Patient Photo">
-    </div>
-    <h2>Zayyad Ibrahim Zarma</h2>
-    <p><b>Sex:</b> Male</p>
-    <p><b>Age:</b> 34 years</p>
-
-    <div class="section">
-      <h3>Medical Details</h3>
-      <p><b>Blood Type:</b> O+</p>
-      <p><b>Genotype:</b> AB</p>
-      <p><b>Allergies:</b> Penicillin, Dust, Honey</p>
-      <p><b>Current Medications:</b> Paracetamol 500mg, Loratidin 10mg, Vitamin C 1000UI bd</p>
-    </div>
-
-    <div class="section">
-      <h3>History</h3>
-      <p><b>Past Medical History:</b> Hypertension, Asthma</p>
-      <p><b>Past Surgical History:</b> Appendectomy (2015)</p>
-      <p><b>Family Illness History:</b> Hypertension (Mother), Hypertension (Father)</p>
-      <p><b>Immunization History:</b> Fully immunized, COVID-19 (2 doses)</p>
-      <p><b>Social History:</b> Non-smoker, Non-alcohol</p>
-    </div>
-
-    <div class="section">
-      <h3>Emergency Contact</h3>
-      <p><b>Name:</b> Hauwa Zayyad (spouse)</p>
-      <p><b>Phone:</b> +2348036559455</p>
+  <div class="container" id="record">
+    <header>
+      <h1>Patient Emergency Health Record</h1>
+      <p class="subtitle">Always up-to-date medical information for emergencies</p>
+      <div class="emergency-badge">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>EMERGENCY INFORMATION</span>
+      </div>
+    </header>
+    
+    <div class="content">
+      <div class="sidebar">
+        <div class="profile">
+          <div class="profile-img-container">
+            <img src="patient.jpg" alt="Patient Photo" class="profile-img" id="patient-photo">
+            <div class="change-photo-btn">
+              <i class="fas fa-camera"></i>
+              <input type="file" id="photo-upload" accept="image/*" style="display: none;">
+            </div>
+          </div>
+          <div class="patient-info">
+            <h2 class="patient-name" id="name">Zayyad Ibrahim Zarma</h2>
+            <p class="patient-details">
+              <span id="sex">Male</span> • <span id="age">34 years</span>
+            </p>
+          </div>
+        </div>
+        
+        <div class="info-card">
+          <h3><i class="fas fa-tint"></i> Blood Information</h3>
+          <div class="info-item">
+            <span class="info-label">Blood Type:</span>
+            <span class="info-value">
+              <select id="blood">
+                <option>O+</option>
+                <option>O-</option>
+                <option>A+</option>
+                <option>A-</option>
+                <option>B+</option>
+                <option>B-</option>
+                <option>AB+</option>
+                <option>AB-</option>
+              </select>
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Genotype:</span>
+            <span class="info-value">
+              <select id="genotype">
+                <option>AA</option>
+                <option>AS</option>
+                <option>SS</option>
+                <option>AC</option>
+                <option>SC</option>
+                <option>AB</option>
+              </select>
+            </span>
+          </div>
+        </div>
+        
+        <div class="info-card">
+          <h3><i class="fas fa-phone-alt"></i> Emergency Contact</h3>
+          <div class="info-item">
+            <span class="info-label">Name:</span>
+            <span class="info-value">
+              <input type="text" id="emergency-name" value="Hauwa Zayyad (Spouse)">
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Phone:</span>
+            <span class="info-value">
+              <input type="text" id="emergency-phone" value="+2348036559455">
+            </span>
+          </div>
+        </div>
+        
+        <button class="btn btn-download" onclick="downloadPDF()">
+          <i class="fas fa-download"></i> Download as PDF
+        </button>
+        
+        <p class="timestamp" id="timestamp">Report generated on: </p>
+      </div>
+      
+      <div class="main-content">
+        <div class="info-card">
+          <h3><i class="fas fa-allergies"></i> Allergies</h3>
+          <div class="info-item">
+            <span class="info-value">
+              <input type="text" id="allergies" value="Penicillin, Dust, Honey">
+            </span>
+          </div>
+          <div class="badges-container" id="allergies-badges"></div>
+        </div>
+        
+        <div class="info-card">
+          <h3><i class="fas fa-pills"></i> Current Medications</h3>
+          <div class="info-item">
+            <span class="info-value">
+              <input type="text" id="medications" value="Paracetamol 500mg, Loratidin 10mg, Vitamin C 1000UI bd">
+            </span>
+          </div>
+          <div class="badges-container" id="medications-badges"></div>
+        </div>
+        
+        <div class="info-card">
+          <h3><i class="fas fa-history"></i> Medical History</h3>
+          <div class="info-item">
+            <span class="info-label">Past Medical:</span>
+            <span class="info-value">
+              <input type="text" id="pmh" value="Hypertension, Asthma">
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Past Surgical:</span>
+            <span class="info-value">
+              <input type="text" id="psh" value="Appendectomy (2015)">
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Family History:</span>
+            <span class="info-value">
+              <input type="text" id="family" value="Hypertension (Mother, Father)">
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Immunization:</span>
+            <span class="info-value">
+              <input type="text" id="immunization" value="Fully immunized, COVID-19 (2 doses)">
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Social History:</span>
+            <span class="info-value">
+              <input type="text" id="social" value="Non-smoker, Non-alcohol">
+            </span>
+          </div>
+        </div>
+        
+        <div class="info-card">
+          <h3><i class="fas fa-info-circle"></i> Important Notes</h3>
+          <p style="color: var(--gray); font-size: 14px; line-height: 1.6;">
+            <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i>
+            This record contains critical medical information for emergency situations. Please keep it updated and accessible to healthcare providers when needed.
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-    // ✅ Use PRODUCTION webhook (not test)
-    const webhookUrl = "https://zenthuratech007.app.n8n.cloud/webhook/scan-alert";
+    // Function to set timestamp
+    function updateTimestamp() {
+      const now = new Date();
+      const formatted = now.toLocaleString();
+      document.getElementById("timestamp").textContent = "Report generated on: " + formatted;
+      return now;
+    }
+    updateTimestamp(); // Show immediately
 
-    const patient = "Zayyad Ibrahim Zarma";
+    // Enable inline editing + save to localStorage
+    document.querySelectorAll("input[type='text']").forEach(el => {
+      const id = el.id;
+      const savedValue = localStorage.getItem(id);
+      if (savedValue) el.value = savedValue;
 
-    navigator.geolocation.getCurrentPosition(
-      function(pos) {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-        const timestamp = new Date().toISOString();
+      el.addEventListener("change", () => {
+        localStorage.setItem(id, el.value);
+        updateBadges();
+      });
+    });
 
-        fetch(webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            patient: patient,
-            lat: lat,
-            lon: lon,
-            timestamp: timestamp
-          })
-        })
-        .then(response => console.log("✅ Sent to server"))
-        .catch(err => console.error("❌ Error:", err));
-      },
-      function(err) {
-        console.error("❌ Could not get location:", err);
+    // Save dropdown values
+    ["blood", "genotype"].forEach(id => {
+      const el = document.getElementById(id);
+      const savedValue = localStorage.getItem(id);
+      if (savedValue) el.value = savedValue;
+      el.addEventListener("change", () => {
+        localStorage.setItem(id, el.value);
+      });
+    });
+
+    // Handle photo upload
+    const photoInput = document.getElementById("photo-upload");
+    const photoImg = document.getElementById("patient-photo");
+    const changePhotoBtn = document.querySelector(".change-photo-btn");
+    const savedPhoto = localStorage.getItem("patient-photo");
+    if (savedPhoto) photoImg.src = savedPhoto;
+
+    changePhotoBtn.addEventListener("click", function() {
+      photoInput.click();
+    });
+
+    photoInput.addEventListener("change", function() {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          photoImg.src = e.target.result;
+          localStorage.setItem("patient-photo", e.target.result);
+        };
+        reader.readAsDataURL(file);
       }
-    );
+    });
+
+    // Download PDF with dynamic filename
+    function downloadPDF() {
+      const now = updateTimestamp(); // Refresh timestamp each time
+      const element = document.getElementById("record");
+
+      const patientName = document.getElementById("name").textContent.replace(/\s+/g, "_");
+      const dateStr = now.toISOString().split("T")[0]; // yyyy-mm-dd
+      const filename = patientName + "_Record_" + dateStr + ".pdf";
+
+      const opt = {
+        margin:       0.5,
+        filename:     filename,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+    
+    // Create badges for allergies and medications
+    function updateBadges() {
+      const allergies = document.getElementById("allergies").value.split(",");
+      const medications = document.getElementById("medications").value.split(",");
+      
+      const allergiesContainer = document.getElementById("allergies-badges");
+      const medicationsContainer = document.getElementById("medications-badges");
+      
+      allergiesContainer.innerHTML = "";
+      medicationsContainer.innerHTML = "";
+      
+      allergies.forEach(allergy => {
+        if (allergy.trim() !== "") {
+          const badge = document.createElement("span");
+          badge.className = "badge badge-allergy";
+          badge.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${allergy.trim()}`;
+          allergiesContainer.appendChild(badge);
+        }
+      });
+      
+      medications.forEach(medication => {
+        if (medication.trim() !== "") {
+          const badge = document.createElement("span");
+          badge.className = "badge badge-medication";
+          badge.innerHTML = `<i class="fas fa-pills"></i> ${medication.trim()}`;
+          medicationsContainer.appendChild(badge);
+        }
+      });
+    }
+    
+    // Initialize badges on page load
+    document.addEventListener("DOMContentLoaded", function() {
+      updateBadges();
+      
+      // Load saved values for inputs
+      document.querySelectorAll("input[type='text']").forEach(el => {
+        const id = el.id;
+        const savedValue = localStorage.getItem(id);
+        if (savedValue) el.value = savedValue;
+      });
+      
+      // Load saved values for selects
+      ["blood", "genotype"].forEach(id => {
+        const el = document.getElementById(id);
+        const savedValue = localStorage.getItem(id);
+        if (savedValue) el.value = savedValue;
+      });
+    });
   </script>
 </body>
 </html>
