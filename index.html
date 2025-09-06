@@ -279,6 +279,29 @@
       color: #1565c0;
     }
     
+    /* Emergency Contact Specific Styles */
+    .emergency-contact {
+      background-color: #fff4f4;
+      border-left: 4px solid var(--danger);
+    }
+    
+    .emergency-contact h3 {
+      color: var(--danger);
+    }
+    
+    .emergency-contact .info-item {
+      flex-wrap: wrap;
+    }
+    
+    .emergency-contact .info-label {
+      min-width: 80px;
+    }
+    
+    .emergency-contact .info-value {
+      min-width: 0;
+      flex: 1 1 200px;
+    }
+    
     /* Responsive styles */
     @media (max-width: 768px) {
       .content {
@@ -294,6 +317,19 @@
         position: static;
         margin-top: 15px;
         justify-content: center;
+      }
+      
+      .info-item {
+        flex-direction: column;
+      }
+      
+      .info-label {
+        min-width: 100%;
+        margin-bottom: 5px;
+      }
+      
+      .emergency-contact .info-value {
+        flex: 1 1 100%;
       }
     }
   </style>
@@ -313,7 +349,7 @@
       <div class="sidebar">
         <div class="profile">
           <div class="profile-img-container">
-            <img src="patient.jpg" alt="Patient Photo" class="profile-img" id="patient-photo">
+            <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&h=200&q=80" alt="Patient Photo" class="profile-img" id="patient-photo">
             <div class="change-photo-btn">
               <i class="fas fa-camera"></i>
               <input type="file" id="photo-upload" accept="image/*" style="display: none;">
@@ -359,7 +395,7 @@
           </div>
         </div>
         
-        <div class="info-card">
+        <div class="info-card emergency-contact">
           <h3><i class="fas fa-phone-alt"></i> Emergency Contact</h3>
           <div class="info-item">
             <span class="info-label">Name:</span>
