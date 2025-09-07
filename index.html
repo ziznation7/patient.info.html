@@ -116,27 +116,6 @@
       box-shadow: var(--box-shadow);
     }
     
-    .change-photo-btn {
-      position: absolute;
-      bottom: 5px;
-      right: 5px;
-      background-color: var(--primary);
-      color: white;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      border: 2px solid white;
-      transition: all 0.2s;
-    }
-    
-    .change-photo-btn:hover {
-      background-color: #235a7c;
-    }
-    
     .patient-info {
       text-align: center;
     }
@@ -349,11 +328,8 @@
       <div class="sidebar">
         <div class="profile">
           <div class="profile-img-container">
-            <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&h=200&q=80" alt="Patient Photo" class="profile-img" id="patient-photo">
-            <div class="change-photo-btn">
-              <i class="fas fa-camera"></i>
-              <input type="file" id="photo-upload" accept="image/*" style="display: none;">
-            </div>
+            <!-- Patient photo always comes from patient.jpg -->
+            <img src="patient.jpg" alt="Patient Photo" class="profile-img" id="patient-photo">
           </div>
           <div class="patient-info">
             <h2 class="patient-name" id="name">Zayyad Ibrahim Zarma</h2>
@@ -516,29 +492,6 @@
       });
     });
 
-    // Handle photo upload
-    const photoInput = document.getElementById("photo-upload");
-    const photoImg = document.getElementById("patient-photo");
-    const changePhotoBtn = document.querySelector(".change-photo-btn");
-    const savedPhoto = localStorage.getItem("patient-photo");
-    if (savedPhoto) photoImg.src = savedPhoto;
-
-    changePhotoBtn.addEventListener("click", function() {
-      photoInput.click();
-    });
-
-    photoInput.addEventListener("change", function() {
-      const file = this.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          photoImg.src = e.target.result;
-          localStorage.setItem("patient-photo", e.target.result);
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
     // Download PDF with dynamic filename
     function downloadPDF() {
       const now = updateTimestamp(); // Refresh timestamp each time
@@ -603,9 +556,4 @@
       ["blood", "genotype"].forEach(id => {
         const el = document.getElementById(id);
         const savedValue = localStorage.getItem(id);
-        if (savedValue) el.value = savedValue;
-      });
-    });
-  </script>
-</body>
-</html>
+        if
