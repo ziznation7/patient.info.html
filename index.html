@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Comprehensive Patient Health Record</title>
+  <title>Patient Health Record</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -242,6 +242,13 @@
       background-color: #219653;
     }
     
+    .btn-call {
+      background-color: var(--success);
+      padding: 8px 15px;
+      width: auto;
+      margin-left: 10px;
+    }
+    
     .timestamp {
       text-align: center;
       color: var(--gray);
@@ -311,6 +318,15 @@
       gap: 15px;
     }
     
+    .phone-input-container {
+      display: flex;
+      align-items: center;
+    }
+    
+    .phone-input-container input {
+      flex: 1;
+    }
+    
     @media (max-width: 992px) {
       .two-column {
         grid-template-columns: 1fr;
@@ -345,13 +361,23 @@
       .emergency-contact .info-value {
         flex: 1 1 100%;
       }
+      
+      .phone-input-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .btn-call {
+        margin-left: 0;
+        margin-top: 10px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container" id="record">
     <header>
-      <h1>Comprehensive Patient Health Record</h1>
+      <h1>Patient Health Record</h1>
       <p class="subtitle">Complete medical information for emergency situations</p>
       <div class="emergency-badge">
         <i class="fas fa-exclamation-circle"></i>
@@ -428,13 +454,23 @@
           <div class="info-item">
             <span class="info-label">Phone:</span>
             <span class="info-value">
-              <input type="tel" id="emergency-phone" value="+2348036559455">
+              <div class="phone-input-container">
+                <input type="tel" id="emergency-phone" value="+2348036559455">
+                <button class="btn btn-call" onclick="callEmergencyContact()">
+                  <i class="fas fa-phone"></i> Call
+                </button>
+              </div>
             </span>
           </div>
           <div class="info-item">
             <span class="info-label">Alternate Phone:</span>
             <span class="info-value">
-              <input type="tel" id="emergency-phone-alt" placeholder="Alternate phone">
+              <div class="phone-input-container">
+                <input type="tel" id="emergency-phone-alt" placeholder="Alternate phone">
+                <button class="btn btn-call" onclick="callAlternateContact()">
+                  <i class="fas fa-phone"></i> Call
+                </button>
+              </div>
             </span>
           </div>
         </div>
@@ -773,6 +809,26 @@
         reader.readAsDataURL(file);
       }
     });
+
+    // Call emergency contact function
+    function callEmergencyContact() {
+      const phoneNumber = document.getElementById('emergency-phone').value;
+      if (phoneNumber) {
+        window.open(`tel:${phoneNumber}`, '_self');
+      } else {
+        alert('Please enter a valid phone number for the emergency contact.');
+      }
+    }
+
+    // Call alternate contact function
+    function callAlternateContact() {
+      const phoneNumber = document.getElementById('emergency-phone-alt').value;
+      if (phoneNumber) {
+        window.open(`tel:${phoneNumber}`, '_self');
+      } else {
+        alert('Please enter a valid phone number for the alternate contact.');
+      }
+    }
 
     // Download PDF with dynamic filename
     function downloadPDF() {
