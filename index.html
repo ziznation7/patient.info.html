@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Patient Emergency Health Record</title>
+  <title>Comprehensive Patient Health Record</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* Global Styles */
     :root {
       --primary: #2c6e9b;
       --primary-light: #e8f2f9;
@@ -38,7 +37,7 @@
     }
     
     .container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
       background-color: #fff;
       border-radius: var(--border-radius);
@@ -108,12 +107,33 @@
     }
     
     .profile-img {
-      width: 130px;
-      height: 130px;
+      width: 150px;
+      height: 150px;
       border-radius: 50%;
       object-fit: cover;
       border: 4px solid white;
       box-shadow: var(--box-shadow);
+    }
+    
+    .change-photo-btn {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      background-color: var(--primary);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid white;
+      transition: all 0.2s;
+    }
+    
+    .change-photo-btn:hover {
+      background-color: #235a7c;
     }
     
     .patient-info {
@@ -162,7 +182,7 @@
     
     .info-label {
       font-weight: 600;
-      min-width: 120px;
+      min-width: 150px;
       color: var(--dark);
     }
     
@@ -170,7 +190,7 @@
       flex: 1;
     }
     
-    input[type="text"], select {
+    input[type="text"], select, input[type="date"], input[type="tel"], input[type="email"], textarea {
       width: 100%;
       padding: 10px 12px;
       border: 1px solid #ddd;
@@ -180,20 +200,16 @@
       transition: border 0.3s;
     }
     
-    input[type="text"]:focus, select:focus {
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    
+    input[type="text"]:focus, select:focus, input[type="date"]:focus, 
+    input[type="tel"]:focus, input[type="email"]:focus, textarea:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 2px rgba(44, 110, 155, 0.2);
-    }
-    
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--primary);
-      margin: 25px 0 15px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #eee;
     }
     
     .btn {
@@ -258,7 +274,6 @@
       color: #1565c0;
     }
     
-    /* Emergency Contact Specific Styles */
     .emergency-contact {
       background-color: #fff4f4;
       border-left: 4px solid var(--danger);
@@ -273,7 +288,7 @@
     }
     
     .emergency-contact .info-label {
-      min-width: 80px;
+      min-width: 100px;
     }
     
     .emergency-contact .info-value {
@@ -281,7 +296,27 @@
       flex: 1 1 200px;
     }
     
-    /* Responsive styles */
+    .critical-alert {
+      background-color: #fff4f4;
+      border-left: 4px solid var(--danger);
+    }
+    
+    .critical-alert h3 {
+      color: var(--danger);
+    }
+    
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    @media (max-width: 992px) {
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+    }
+    
     @media (max-width: 768px) {
       .content {
         grid-template-columns: 1fr;
@@ -316,8 +351,8 @@
 <body>
   <div class="container" id="record">
     <header>
-      <h1>Patient Emergency Health Record</h1>
-      <p class="subtitle">Always up-to-date medical information for emergencies</p>
+      <h1>Comprehensive Patient Health Record</h1>
+      <p class="subtitle">Complete medical information for emergency situations</p>
       <div class="emergency-badge">
         <i class="fas fa-exclamation-circle"></i>
         <span>EMERGENCY INFORMATION</span>
@@ -328,13 +363,16 @@
       <div class="sidebar">
         <div class="profile">
           <div class="profile-img-container">
-            <!-- Patient photo always comes from patient.jpg -->
             <img src="patient.jpg" alt="Patient Photo" class="profile-img" id="patient-photo">
+            <div class="change-photo-btn">
+              <i class="fas fa-camera"></i>
+              <input type="file" id="photo-upload" accept="image/*" style="display: none;">
+            </div>
           </div>
           <div class="patient-info">
             <h2 class="patient-name" id="name">Zayyad Ibrahim Zarma</h2>
             <p class="patient-details">
-              <span id="sex">Male</span> • <span id="age">34 years</span>
+              <span id="age">34 years</span> • <span id="gender">Male</span>
             </p>
           </div>
         </div>
@@ -344,7 +382,8 @@
           <div class="info-item">
             <span class="info-label">Blood Type:</span>
             <span class="info-value">
-              <select id="blood">
+              <select id="blood-type">
+                <option value="">Select</option>
                 <option>O+</option>
                 <option>O-</option>
                 <option>A+</option>
@@ -360,6 +399,7 @@
             <span class="info-label">Genotype:</span>
             <span class="info-value">
               <select id="genotype">
+                <option value="">Select</option>
                 <option>AA</option>
                 <option>AS</option>
                 <option>SS</option>
@@ -380,9 +420,21 @@
             </span>
           </div>
           <div class="info-item">
+            <span class="info-label">Relationship:</span>
+            <span class="info-value">
+              <input type="text" id="emergency-relationship" value="Spouse">
+            </span>
+          </div>
+          <div class="info-item">
             <span class="info-label">Phone:</span>
             <span class="info-value">
-              <input type="text" id="emergency-phone" value="+2348036559455">
+              <input type="tel" id="emergency-phone" value="+2348036559455">
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Alternate Phone:</span>
+            <span class="info-value">
+              <input type="tel" id="emergency-phone-alt" placeholder="Alternate phone">
             </span>
           </div>
         </div>
@@ -396,65 +448,237 @@
       
       <div class="main-content">
         <div class="info-card">
-          <h3><i class="fas fa-allergies"></i> Allergies</h3>
-          <div class="info-item">
-            <span class="info-value">
-              <input type="text" id="allergies" value="Penicillin, Dust, Honey">
-            </span>
+          <h3><i class="fas fa-user"></i> Personal & Identification Info</h3>
+          <div class="two-column">
+            <div class="info-item">
+              <span class="info-label">Full Name:</span>
+              <span class="info-value">
+                <input type="text" id="full-name" value="Zayyad Ibrahim Zarma">
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Date of Birth:</span>
+              <span class="info-value">
+                <input type="date" id="dob" value="1989-05-15">
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Age:</span>
+              <span class="info-value">
+                <input type="text" id="age-display" value="34 years">
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Gender:</span>
+              <span class="info-value">
+                <select id="gender-select">
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Other</option>
+                  <option>Prefer not to say</option>
+                </select>
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Nationality:</span>
+              <span class="info-value">
+                <input type="text" id="nationality" value="Nigerian">
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">ID Number:</span>
+              <span class="info-value">
+                <input type="text" id="id-number" placeholder="National ID/Passport">
+              </span>
+            </div>
           </div>
-          <div class="badges-container" id="allergies-badges"></div>
         </div>
         
         <div class="info-card">
-          <h3><i class="fas fa-pills"></i> Current Medications</h3>
+          <h3><i class="fas fa-heartbeat"></i> Vital Medical Parameters</h3>
           <div class="info-item">
+            <span class="info-label">Allergies:</span>
             <span class="info-value">
-              <input type="text" id="medications" value="Paracetamol 500mg, Loratidin 10mg, Vitamin C 1000UI bd">
+              <textarea id="allergies">Penicillin, Dust, Honey, Shellfish</textarea>
             </span>
           </div>
-          <div class="badges-container" id="medications-badges"></div>
+          <div class="info-item">
+            <span class="info-label">Chronic Conditions:</span>
+            <span class="info-value">
+              <textarea id="chronic-conditions">Hypertension, Asthma, Migraine</textarea>
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Current Medications:</span>
+            <span class="info-value">
+              <textarea id="medications">Lisinopril 10mg daily, Ventolin inhaler as needed, Paracetamol 500mg for headaches</textarea>
+            </span>
+          </div>
         </div>
         
         <div class="info-card">
-          <h3><i class="fas fa-history"></i> Medical History</h3>
+          <h3><i class="fas fa-history"></i> Past Medical History</h3>
           <div class="info-item">
-            <span class="info-label">Past Medical:</span>
+            <span class="info-label">Major Surgeries:</span>
             <span class="info-value">
-              <input type="text" id="pmh" value="Hypertension, Asthma">
+              <textarea id="surgeries">Appendectomy (2015), Tonsillectomy (2001)</textarea>
             </span>
           </div>
           <div class="info-item">
-            <span class="info-label">Past Surgical:</span>
+            <span class="info-label">Past Hospitalizations:</span>
             <span class="info-value">
-              <input type="text" id="psh" value="Appendectomy (2015)">
+              <textarea id="hospitalizations">Pneumonia (2018), Asthma exacerbation (2020)</textarea>
             </span>
           </div>
+          <div class="info-item">
+            <span class="info-label">Vaccination Status:</span>
+            <span class="info-value">
+              <textarea id="vaccinations">Fully immunized, COVID-19 (3 doses), Yellow Fever (2019), Tetanus (2022)</textarea>
+            </span>
+          </div>
+        </div>
+        
+        <div class="info-card">
+          <h3><i class="fas fa-smoking"></i> Lifestyle & Risk Factors</h3>
+          <div class="two-column">
+            <div class="info-item">
+              <span class="info-label">Smoking Status:</span>
+              <span class="info-value">
+                <select id="smoking-status">
+                  <option>Non-smoker</option>
+                  <option>Current smoker</option>
+                  <option>Former smoker</option>
+                </select>
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Alcohol Use:</span>
+              <span class="info-value">
+                <select id="alcohol-use">
+                  <option>Non-drinker</option>
+                  <option>Occasional</option>
+                  <option>Moderate</option>
+                  <option>Heavy</option>
+                </select>
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Drug Use:</span>
+              <span class="info-value">
+                <select id="drug-use">
+                  <option>None</option>
+                  <option>Recreational</option>
+                  <option>Prescription</option>
+                </select>
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Exercise Frequency:</span>
+              <span class="info-value">
+                <select id="exercise">
+                  <option>Sedentary</option>
+                  <option>Light (1-2 days/week)</option>
+                  <option>Moderate (3-5 days/week)</option>
+                  <option>Active (6-7 days/week)</option>
+                </select>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="info-card">
+          <h3><i class="fas fa-wheelchair"></i> Functional & Support Needs</h3>
+          <div class="info-item">
+            <span class="info-label">Disability Status:</span>
+            <span class="info-value">
+              <textarea id="disability" placeholder="Mobility aids, visual or hearing impairments, etc.">None</textarea>
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Special Needs:</span>
+            <span class="info-value">
+              <textarea id="special-needs" placeholder="Oxygen, dialysis, etc.">None</textarea>
+            </span>
+          </div>
+        </div>
+        
+        <div class="info-card critical-alert">
+          <h3><i class="fas fa-exclamation-triangle"></i> Critical Alerts / Notes</h3>
+          <div class="info-item">
+            <span class="info-label">Medical Devices:</span>
+            <span class="info-value">
+              <textarea id="medical-devices" placeholder="Pacemaker, insulin pump, etc.">None</textarea>
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Advance Directives:</span>
+            <span class="info-value">
+              <select id="advance-directives">
+                <option>Full resuscitation</option>
+                <option>DNR (Do Not Resuscitate)</option>
+                <option>DNR/DNI (Do Not Intubate)</option>
+                <option>Other</option>
+              </select>
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Religious Restrictions:</span>
+            <span class="info-value">
+              <textarea id="religious-restrictions" placeholder="Jehovah's Witness, etc.">None</textarea>
+            </span>
+          </div>
+        </div>
+        
+        <div class="info-card">
+          <h3><i class="fas fa-dna"></i> Family Medical History</h3>
           <div class="info-item">
             <span class="info-label">Family History:</span>
             <span class="info-value">
-              <input type="text" id="family" value="Hypertension (Mother, Father)">
-            </span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Immunization:</span>
-            <span class="info-value">
-              <input type="text" id="immunization" value="Fully immunized, COVID-19 (2 doses)">
-            </span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Social History:</span>
-            <span class="info-value">
-              <input type="text" id="social" value="Non-smoker, Non-alcohol">
+              <textarea id="family-history">Mother: Hypertension, Diabetes; Father: Heart disease, Hypertension; Maternal grandmother: Breast cancer</textarea>
             </span>
           </div>
         </div>
         
         <div class="info-card">
-          <h3><i class="fas fa-info-circle"></i> Important Notes</h3>
-          <p style="color: var(--gray); font-size: 14px; line-height: 1.6;">
-            <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i>
-            This record contains critical medical information for emergency situations. Please keep it updated and accessible to healthcare providers when needed.
-          </p>
+          <h3><i class="fas fa-clipboard-list"></i> Recent Vital Signs</h3>
+          <div class="two-column">
+            <div class="info-item">
+              <span class="info-label">Blood Pressure:</span>
+              <span class="info-value">
+                <input type="text" id="blood-pressure" value="120/80 mmHg">
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Heart Rate:</span>
+              <span class="info-value">
+                <input type="text" id="heart-rate" value="72 bpm">
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Weight:</span>
+              <span class="info-value">
+                <input type="text" id="weight" value="82 kg">
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Height:</span>
+              <span class="info-value">
+                <input type="text" id="height" value="178 cm">
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">BMI:</span>
+              <span class="info-value">
+                <input type="text" id="bmi" value="25.9">
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Last Updated:</span>
+              <span class="info-value">
+                <input type="date" id="vitals-date" value="2023-11-15">
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -471,25 +695,83 @@
     updateTimestamp(); // Show immediately
 
     // Enable inline editing + save to localStorage
-    document.querySelectorAll("input[type='text']").forEach(el => {
-      const id = el.id;
-      const savedValue = localStorage.getItem(id);
-      if (savedValue) el.value = savedValue;
+    function setupInputSaving() {
+      document.querySelectorAll("input, select, textarea").forEach(el => {
+        const id = el.id;
+        if (!id) return;
+        
+        const savedValue = localStorage.getItem(id);
+        if (savedValue !== null) {
+          if (el.type === 'checkbox') {
+            el.checked = savedValue === 'true';
+          } else {
+            el.value = savedValue;
+          }
+        }
 
-      el.addEventListener("change", () => {
-        localStorage.setItem(id, el.value);
-        updateBadges();
+        el.addEventListener("change", () => {
+          if (el.type === 'checkbox') {
+            localStorage.setItem(id, el.checked);
+          } else {
+            localStorage.setItem(id, el.value);
+          }
+          
+          // Update age if DOB changes
+          if (id === 'dob') {
+            updateAgeFromDOB();
+          }
+        });
       });
+    }
+
+    // Calculate age from date of birth
+    function updateAgeFromDOB() {
+      const dobInput = document.getElementById('dob');
+      const ageDisplay = document.getElementById('age-display');
+      
+      if (dobInput.value) {
+        const birthDate = new Date(dobInput.value);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
+        }
+        
+        ageDisplay.value = `${age} years`;
+        localStorage.setItem('age-display', ageDisplay.value);
+      }
+    }
+
+    // Handle photo upload
+    const photoInput = document.getElementById("photo-upload");
+    const photoImg = document.getElementById("patient-photo");
+    const changePhotoBtn = document.querySelector(".change-photo-btn");
+    const savedPhoto = localStorage.getItem("patient-photo");
+    
+    // Load saved photo if available, otherwise use patient.jpg
+    if (savedPhoto) {
+      photoImg.src = savedPhoto;
+    } else {
+      // Ensure patient.jpg is loaded
+      photoImg.src = "patient.jpg";
+    }
+
+    changePhotoBtn.addEventListener("click", function() {
+      photoInput.click();
     });
 
-    // Save dropdown values
-    ["blood", "genotype"].forEach(id => {
-      const el = document.getElementById(id);
-      const savedValue = localStorage.getItem(id);
-      if (savedValue) el.value = savedValue;
-      el.addEventListener("change", () => {
-        localStorage.setItem(id, el.value);
-      });
+    photoInput.addEventListener("change", function() {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          photoImg.src = e.target.result;
+          localStorage.setItem("patient-photo", e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
     });
 
     // Download PDF with dynamic filename
@@ -499,7 +781,7 @@
 
       const patientName = document.getElementById("name").textContent.replace(/\s+/g, "_");
       const dateStr = now.toISOString().split("T")[0]; // yyyy-mm-dd
-      const filename = patientName + "_Record_" + dateStr + ".pdf";
+      const filename = patientName + "_Health_Record_" + dateStr + ".pdf";
 
       const opt = {
         margin:       0.5,
@@ -508,52 +790,26 @@
         html2canvas:  { scale: 2 },
         jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
       };
+      
       html2pdf().set(opt).from(element).save();
     }
     
-    // Create badges for allergies and medications
-    function updateBadges() {
-      const allergies = document.getElementById("allergies").value.split(",");
-      const medications = document.getElementById("medications").value.split(",");
-      
-      const allergiesContainer = document.getElementById("allergies-badges");
-      const medicationsContainer = document.getElementById("medications-badges");
-      
-      allergiesContainer.innerHTML = "";
-      medicationsContainer.innerHTML = "";
-      
-      allergies.forEach(allergy => {
-        if (allergy.trim() !== "") {
-          const badge = document.createElement("span");
-          badge.className = "badge badge-allergy";
-          badge.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${allergy.trim()}`;
-          allergiesContainer.appendChild(badge);
-        }
-      });
-      
-      medications.forEach(medication => {
-        if (medication.trim() !== "") {
-          const badge = document.createElement("span");
-          badge.className = "badge badge-medication";
-          badge.innerHTML = `<i class="fas fa-pills"></i> ${medication.trim()}`;
-          medicationsContainer.appendChild(badge);
-        }
-      });
-    }
-    
-    // Initialize badges on page load
+    // Initialize on page load
     document.addEventListener("DOMContentLoaded", function() {
-      updateBadges();
+      setupInputSaving();
+      updateAgeFromDOB();
       
-      // Load saved values for inputs
-      document.querySelectorAll("input[type='text']").forEach(el => {
-        const id = el.id;
-        const savedValue = localStorage.getItem(id);
-        if (savedValue) el.value = savedValue;
-      });
+      // Set up blood type and genotype from saved values
+      const savedBloodType = localStorage.getItem('blood-type');
+      if (savedBloodType) {
+        document.getElementById('blood-type').value = savedBloodType;
+      }
       
-      // Load saved values for selects
-      ["blood", "genotype"].forEach(id => {
-        const el = document.getElementById(id);
-        const savedValue = localStorage.getItem(id);
-        if
+      const savedGenotype = localStorage.getItem('genotype');
+      if (savedGenotype) {
+        document.getElementById('genotype').value = savedGenotype;
+      }
+    });
+  </script>
+</body>
+</html>
